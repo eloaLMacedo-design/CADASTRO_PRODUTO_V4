@@ -1,28 +1,23 @@
-
 //
 // FASE 1: MODELAGEM DOS DADOS - CLASSE PRODUTO
 //
 
 class Produto {
 
-    // Atributos privados
     #preco;
     #quantidade;
 
     constructor(nome, preco, quantidade) {
 
-        // Validação do nome
         if (!nome || nome.trim() === "") {
             throw new Error("O nome do produto não pode ficar em branco.");
         }
 
         this.nome = nome.trim();
 
-        // Utiliza os setters para validar os valores
         this.preco = preco;
         this.quantidade = quantidade;
     }
-
 
     // GETTER E SETTER DO PREÇO
 
@@ -41,7 +36,6 @@ class Produto {
         this.#preco = novoPreco;
     }
 
-
     // GETTER E SETTER DA QUANTIDADE
 
     get quantidade() {
@@ -59,7 +53,6 @@ class Produto {
         this.#quantidade = novaQuantidade;
     }
 
-
     // CALCULAR SUBTOTAL
 
     calcularSubtotal() {
@@ -76,8 +69,6 @@ const listaDeProdutos = [];
 
 const CHAVE_STORAGE = "sistema_estoque_produtos";
 
-// null = modo cadastro
-// número = modo edição
 let indiceEdicao = null;
 
 
@@ -159,9 +150,13 @@ const quantidadeEl = document.getElementById("quantidade");
 
 const btnPrincipal = document.querySelector(".btn-primary");
 
+const btnCancelarEdicao = document.getElementById("btn-cancelar-edicao");
 
-// Guarda o texto original do botão
 const textoBotaoOriginal = btnPrincipal.textContent.trim();
+
+const campoBusca = document.getElementById("campo-busca");
+
+const mensagemVazia = document.getElementById("mensagem-vazia");
 
 
 //
@@ -176,15 +171,19 @@ function prepararEdicao(index) {
         alert("Produto não encontrado.");
         return;
     }
+
     nomeEl.value = produto.nome;
+
     precoEl.value = produto.preco;
+
     quantidadeEl.value = produto.quantidade;
-    // Ativa o modo edição
+
     indiceEdicao = index;
-    // Altera o texto do botão
+
     btnPrincipal.textContent = "Salvar Alterações";
 
-    // Leva o formulário para a tela
+    btnCancelarEdicao.hidden = false;
+
     formProduto.scrollIntoView({
         behavior: "smooth",
         block: "center"
@@ -200,15 +199,23 @@ function prepararEdicao(index) {
 
 function cancelarEdicao() {
 
-    // Volta para o modo cadastro
     indiceEdicao = null;
 
-    // Limpa os campos
     formProduto.reset();
 
-    // Restaura o texto do botão
     btnPrincipal.textContent = textoBotaoOriginal;
+
+    btnCancelarEdicao.hidden = true;
 }
+
+
+// Evento do botão cancelar edição
+
+btnCancelarEdicao.addEventListener("click", function() {
+
+    cancelarEdicao();
+
+});
 
 
 //
@@ -217,11 +224,9 @@ function cancelarEdicao() {
 
 formProduto.addEventListener("submit", function(event) {
 
-    // Impede o recarregamento da página
     event.preventDefault();
 
-
-    // SANITIZAÇÃO COM TRIM()
+    // SANITIZAÇÃO
 
     const nome = nomeEl.value.trim();
 
@@ -230,7 +235,7 @@ formProduto.addEventListener("submit", function(event) {
     const quantidade = Number(quantidadeEl.value);
 
 
-    // GUARD CLAUSE: VALIDAÇÃO DO NOME
+    // VALIDAÇÃO DO NOME
 
     if (!nome) {
 
@@ -242,7 +247,7 @@ formProduto.addEventListener("submit", function(event) {
     }
 
 
-    // GUARD CLAUSE: VALIDAÇÃO DO PREÇO E QUANTIDADE
+    // VALIDAÇÃO DO PREÇO E QUANTIDADE
 
     if (
         precoEl.value.trim() === "" ||
@@ -261,7 +266,6 @@ formProduto.addEventListener("submit", function(event) {
 
     try {
 
-        // Cria o produto somente depois das validações
         const novoProduto = new Produto(
             nome,
             preco,
@@ -269,18 +273,14 @@ formProduto.addEventListener("submit", function(event) {
         );
 
 
-        // LÓGICA DE INCLUSÃO OU EDIÇÃO
+        // INCLUSÃO OU EDIÇÃO
 
         if (indiceEdicao === null) {
 
-            // MODO INCLUSÃO
-            // Adiciona um novo produto
             listaDeProdutos.push(novoProduto);
 
         } else {
 
-            // MODO EDIÇÃO
-            // Verifica se o produto ainda existe
             if (!listaDeProdutos[indiceEdicao]) {
 
                 alert("O produto selecionado não foi encontrado.");
@@ -290,20 +290,22 @@ formProduto.addEventListener("submit", function(event) {
                 return;
             }
 
-            // Substitui o produto antigo pelo atualizado
             listaDeProdutos[indiceEdicao] = novoProduto;
         }
 
 
-        // SALVA NO LOCALSTORAGE
+        // SALVAR
+
         salvarNoLocalStorage();
 
 
-        // ATUALIZA A INTERFACE
+        // ATUALIZAR INTERFACE
+
         atualizarInterface();
 
 
-        // RESTAURA O ESTADO
+        // RESTAURAR FORMULÁRIO
+
         cancelarEdicao();
 
     } catch (erro) {
@@ -321,26 +323,23 @@ formProduto.addEventListener("submit", function(event) {
 function removerProduto(index) {
 
     if (!listaDeProdutos[index]) {
+
         alert("Produto não encontrado.");
+
         return;
     }
 
-    // Se o produto removido estiver sendo editado,
-    // cancela o modo edição
     if (indiceEdicao === index) {
 
         cancelarEdicao();
 
     } else if (indiceEdicao !== null && indiceEdicao > index) {
 
-        // Ajusta o índice caso um produto anterior seja removido
         indiceEdicao--;
     }
 
-    // Remove o produto
     listaDeProdutos.splice(index, 1);
 
-    // Salva e atualiza
     salvarNoLocalStorage();
 
     atualizarInterface();
@@ -361,45 +360,43 @@ btnLimparTudo.addEventListener("click", function() {
         return;
     }
 
-    // Esvazia a lista
     listaDeProdutos.length = 0;
 
-    // Cancela qualquer edição
     cancelarEdicao();
 
-    // Apaga os dados salvos
     localStorage.removeItem(CHAVE_STORAGE);
 
-    // Atualiza a tela
     atualizarInterface();
+
 });
 
 
 //
-// FASE 11: CALCULAR TOTAL DO ESTOQUE
+// FASE 11: FILTRAR PRODUTOS
 //
 
-function atualizarTotalEstoque() {
+function obterProdutosFiltrados() {
 
-    const valorTotal = listaDeProdutos.reduce(
-        (acumulador, produto) => {
+    const termoBusca = campoBusca.value
+        .trim()
+        .toLowerCase();
 
-            return acumulador + produto.calcularSubtotal();
+    const produtosFiltrados = listaDeProdutos
 
-        },
-        0
-    );
+        .map((produto, index) => ({
+            produto,
+            index
+        }))
 
-    const valorFormatado = valorTotal.toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
+        .filter(item => {
 
-    totalEstoqueEl.textContent =
-        `Total em Estoque: ${valorFormatado}`;
+            return item.produto.nome
+                .toLowerCase()
+                .includes(termoBusca);
+
+        });
+
+    return produtosFiltrados;
 }
 
 
@@ -413,24 +410,64 @@ function renderizarTabela() {
         "#tabela-produtos tbody"
     );
 
-    // Limpa a tabela
+    // LIMPAR TABELA
+
     tabelaBody.innerHTML = "";
 
-    // Percorre os produtos
-    listaDeProdutos.forEach((produto, index) => {
+    // OBTER PRODUTOS FILTRADOS
+
+    const produtosFiltrados = obterProdutosFiltrados();
+
+
+    // VERIFICAR SE EXISTEM PRODUTOS
+
+    if (produtosFiltrados.length === 0) {
+
+        mensagemVazia.hidden = false;
+
+        if (listaDeProdutos.length === 0) {
+
+            mensagemVazia.textContent =
+                "Nenhum produto cadastrado ainda.";
+
+        } else {
+
+            mensagemVazia.textContent =
+                "Nenhum produto encontrado com esse nome.";
+        }
+
+    } else {
+
+        mensagemVazia.hidden = true;
+    }
+
+
+    // PERCORRER PRODUTOS ENCONTRADOS
+
+    produtosFiltrados.forEach(item => {
+
+        const produto = item.produto;
+
+        const index = item.index;
 
         const linha = document.createElement("tr");
 
 
-        // Cria as células
+        // CRIAR CÉLULAS
+
         const celulaNome = document.createElement("td");
+
         const celulaPreco = document.createElement("td");
+
         const celulaQuantidade = document.createElement("td");
+
         const celulaSubtotal = document.createElement("td");
+
         const celulaAcoes = document.createElement("td");
 
 
-        // Preenche os dados
+        // PREENCHER DADOS
+
         celulaNome.textContent = produto.nome;
 
         celulaPreco.textContent =
@@ -449,6 +486,7 @@ function renderizarTabela() {
 
 
         // BOTÃO EDITAR
+
         const btnEditar = document.createElement("button");
 
         btnEditar.textContent = "Editar";
@@ -463,6 +501,7 @@ function renderizarTabela() {
 
 
         // BOTÃO REMOVER
+
         const btnRemover = document.createElement("button");
 
         btnRemover.textContent = "Remover";
@@ -476,7 +515,8 @@ function renderizarTabela() {
         });
 
 
-        // Adiciona os botões à célula
+        // ADICIONAR BOTÕES
+
         celulaAcoes.appendChild(btnEditar);
 
         celulaAcoes.appendChild(btnRemover);
@@ -484,7 +524,8 @@ function renderizarTabela() {
         celulaAcoes.classList.add("acoes");
 
 
-        // Monta a linha
+        // MONTAR LINHA
+
         linha.appendChild(celulaNome);
 
         linha.appendChild(celulaPreco);
@@ -496,33 +537,66 @@ function renderizarTabela() {
         linha.appendChild(celulaAcoes);
 
 
-        // Adiciona à tabela
+        // ADICIONAR NA TABELA
+
         tabelaBody.appendChild(linha);
 
     });
+
 }
 
 
 //
-// FASE 13: ATUALIZAR A INTERFACE
+// FASE 13: ATUALIZAR INTERFACE
 //
 
 function atualizarInterface() {
 
-    // Atualiza a tabela
+    // CALCULAR TOTAL DO ESTOQUE
+
+    const total = listaDeProdutos.reduce((acumulador, produto) => {
+
+        return acumulador + produto.calcularSubtotal();
+
+    }, 0);
+
+
+    // MOSTRAR TOTAL FORMATADO
+
+    totalEstoqueEl.textContent =
+        `Total em estoque: ${total.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+        })}`;
+
+
+    // ATUALIZAR TABELA
+
     renderizarTabela();
 
-    // Atualiza o total
-    atualizarTotalEstoque();
 }
 
 
 //
-// FASE 14: INICIAR O SISTEMA
+// FASE 14: PESQUISAR PRODUTOS
 //
 
-// Carrega os produtos salvos
+campoBusca.addEventListener("input", function() {
+
+    atualizarInterface();
+
+});
+
+
+//
+// FASE 15: INICIAR O SISTEMA
+//
+
+// CARREGAR PRODUTOS SALVOS
+
 carregarDoLocalStorage();
 
-// Mostra os produtos na tela
+
+// MOSTRAR PRODUTOS NA TELA
+
 atualizarInterface();

@@ -335,3 +335,36 @@ tbody tr:hover {
         margin: 4px 0;
     }
 }
+
+.busca-container {
+    margin-bottom: 15px;
+}
+
+#campo-busca {
+    width: 100%;
+    padding: 12px;
+
+    border: 1px solid #347b9e;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #f0f8ff;
+    color: #1b2d40;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#campo-busca:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+#mensagem-vazia {
+    text-align: center;
+    color: #8bdcff;
+    padding: 20px 10px;
+    margin-top: 10px;
+    font-style: italic;
+    background-color: rgba(4, 39, 68, 0.7);
+    border: 1px dashed #347b9e;
+    border-radius: 8px;
+}
