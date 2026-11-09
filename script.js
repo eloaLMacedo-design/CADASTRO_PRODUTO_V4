@@ -158,6 +158,7 @@ const campoBusca = document.getElementById("campo-busca");
 
 const mensagemVazia = document.getElementById("mensagem-vazia");
 
+const sugestoesProdutos = document.getElementById("sugestoes-produtos");
 
 //
 // FASE 6: PREPARAR EDIÇÃO
@@ -214,107 +215,138 @@ function cancelarEdicao() {
 btnCancelarEdicao.addEventListener("click", function() {
 
     cancelarEdicao();
-
+    sugestoesProdutos.hidden = true;
 });
-
-
 //
-// FASE 8: VALIDAÇÃO E ENVIO DO FORMULÁRIO
+// FASE 8: SUGESTÕES DE PRODUTOS PARECIDOS
 //
 
-formProduto.addEventListener("submit", function(event) {
+function normalizarNome(nome) {
 
-    event.preventDefault();
+    return nome
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
 
-    // SANITIZAÇÃO
-
-    const nome = nomeEl.value.trim();
-
-    const preco = Number(precoEl.value);
-
-    const quantidade = Number(quantidadeEl.value);
+}
 
 
-    // VALIDAÇÃO DO NOME
+function verificarProdutosParecidos() {
 
-    if (!nome) {
+    // Verifica se o elemento existe
 
-        alert("Por favor, informe um nome válido para o produto.");
-
-        nomeEl.focus();
-
+    if (!sugestoesProdutos) {
+        console.error("Elemento sugestoes-produtos não encontrado no HTML.");
         return;
     }
 
+    const nomeDigitado = normalizarNome(nomeEl.value);
 
-    // VALIDAÇÃO DO PREÇO E QUANTIDADE
+    sugestoesProdutos.innerHTML = "";
 
-    if (
-        precoEl.value.trim() === "" ||
-        !Number.isFinite(preco) ||
-        preco <= 0 ||
-        quantidadeEl.value.trim() === "" ||
-        !Number.isInteger(quantidade) ||
-        quantidade <= 0
-    ) {
+    sugestoesProdutos.hidden = true;
 
-        alert("O preço e a quantidade devem ser valores numéricos maiores que zero. A quantidade deve ser inteira.");
+    // Só pesquisa depois de duas letras
 
+    if (nomeDigitado.length < 2) {
         return;
     }
 
+    // Procura produtos cadastrados
 
-    try {
+    const encontrados = listaDeProdutos
+        .map((produto, index) => ({
+            produto,
+            index
+        }))
+        .filter(item => {
 
-        const novoProduto = new Produto(
-            nome,
-            preco,
-            quantidade
-        );
+            // Ignora o produto que está sendo editado
 
-
-        // INCLUSÃO OU EDIÇÃO
-
-        if (indiceEdicao === null) {
-
-            listaDeProdutos.push(novoProduto);
-
-        } else {
-
-            if (!listaDeProdutos[indiceEdicao]) {
-
-                alert("O produto selecionado não foi encontrado.");
-
-                cancelarEdicao();
-
-                return;
+            if (indiceEdicao === item.index) {
+                return false;
             }
 
-            listaDeProdutos[indiceEdicao] = novoProduto;
-        }
+            const nomeCadastrado = normalizarNome(item.produto.nome);
+
+            return nomeCadastrado.includes(nomeDigitado);
+
+        });
 
 
-        // SALVAR
+    // Se não encontrar, não mostra aviso
 
-        salvarNoLocalStorage();
-
-
-        // ATUALIZAR INTERFACE
-
-        atualizarInterface();
-
-
-        // RESTAURAR FORMULÁRIO
-
-        cancelarEdicao();
-
-    } catch (erro) {
-
-        alert(erro.message);
+    if (encontrados.length === 0) {
+        return;
     }
 
-});
 
+    // Cria o aviso
+
+    const titulo = document.createElement("p");
+
+    titulo.className = "titulo-sugestao";
+
+    titulo.textContent = "⚠️ Este produto já foi cadastrado!";
+
+    sugestoesProdutos.appendChild(titulo);
+
+
+    // Cria as sugestões
+
+    encontrados.forEach(item => {
+
+        const botao = document.createElement("button");
+
+        botao.type = "button";
+
+        botao.className = "sugestao-item";
+
+        const nomeProduto = document.createElement("strong");
+
+        nomeProduto.textContent = item.produto.nome;
+
+        const detalhes = document.createElement("small");
+
+        detalhes.textContent =
+            `${item.produto.preco.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            })} | ${item.produto.quantidade} unidades`;
+
+
+        botao.appendChild(nomeProduto);
+
+        botao.appendChild(detalhes);
+
+
+        // Abre o produto encontrado para edição
+
+        botao.addEventListener("click", function() {
+
+            prepararEdicao(item.index);
+
+            sugestoesProdutos.hidden = true;
+
+        });
+
+
+        sugestoesProdutos.appendChild(botao);
+
+    });
+
+
+    // Exibe a caixa de sugestões
+
+    sugestoesProdutos.hidden = false;
+
+}
+
+
+// Evento que verifica enquanto digita
+
+nomeEl.addEventListener("input", verificarProdutosParecidos);
 
 //
 // FASE 9: REMOVER UM PRODUTO

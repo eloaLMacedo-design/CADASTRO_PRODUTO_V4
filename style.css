@@ -368,3 +368,141 @@ tbody tr:hover {
     border: 1px dashed #347b9e;
     border-radius: 8px;
 }
+.campo-nome-container {
+    position: relative;
+}
+
+.sugestoes-produtos {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+
+    background-color: #062b49;
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sugestoes-produtos .titulo-sugestao {
+    color: #8bdcff;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.sugestao-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 10px;
+
+    margin-top: 5px;
+
+    background-color: #104568;
+    color: #ffffff;
+
+    border: 1px solid #347b9e;
+    border-radius: 6px;
+
+    text-align: left;
+    cursor: pointer;
+}
+
+.sugestao-item:hover {
+    background-color: #087eae;
+}
+
+.sugestao-item small {
+    color: #b9eaff;
+}
+
+.aviso-semelhante {
+    color: #fcd98b;
+    font-size: 12px;
+}
+.campo-nome-container {
+    position: relative;
+}
+
+.sugestoes-produtos {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #062b49;
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+}
+
+.titulo-sugestao {
+    color: #8bdcff;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.sugestao-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background-color: #104568;
+    color: white;
+    border: 1px solid #347b9e;
+    border-radius: 6px;
+    cursor: pointer;
+}
+/* Área das sugestões de produtos */
+
+.campo-nome-container {
+    position: relative;
+}
+
+.sugestoes-produtos {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #062b49;
+    border: 1px solid #38bdf8;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sugestoes-produtos[hidden] {
+    display: none;
+}
+
+.titulo-sugestao {
+    color: #ffd580;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 0 8px;
+}
+
+.sugestao-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background-color: #104568;
+    color: white;
+    border: 1px solid #347b9e;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sugestao-item:hover {
+    background-color: #087eae;
+}
+
+.sugestao-item small {
+    color: #b9eaff;
+}
