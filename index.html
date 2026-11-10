@@ -1,84 +1,61 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de estoque - POO</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
     <div class="container">
-
-        <div class="titulo">
+        <header class="titulo">
             <img id="foto-perfil" src="eloooooo.jpg" alt="Minha foto">
             <h1>Cadastro de produtos</h1>
-        </div>
+        </header>
 
-        <!-- Formulário de entrada e edição -->
         <form id="produto-form" novalidate>
-
             <div class="form-group campo-nome-container">
-
                 <label for="nome">Nome do produto:</label>
-
                 <input type="text" id="nome" placeholder="Ex. Notebook" maxlength="100" autocomplete="off" required>
-
+                <small class="mensagem-campo" id="erro-nome" aria-live="polite"></small>
                 <div id="sugestoes-produtos" class="sugestoes-produtos" hidden></div>
-
             </div>
-            
+
             <div class="form-group">
                 <label for="preco">Preço (R$):</label>
                 <input type="number" id="preco" step="0.01" min="0.01" placeholder="Ex. 3500.00" required>
+                <small class="mensagem-campo" id="erro-preco" aria-live="polite"></small>
             </div>
 
             <div class="form-group">
                 <label for="quantidade">Quantidade:</label>
                 <input type="number" id="quantidade" step="1" min="1" placeholder="Ex. 5" required>
+                <small class="mensagem-campo" id="erro-quantidade" aria-live="polite"></small>
             </div>
 
             <div class="botoes-formulario">
-                <button type="submit" id="btn-salvar" class="btn-primary">
-                    Adicionar ao carrinho
-                </button>
-
-                <button type="button" id="btn-cancelar-edicao" class="btn-cancelar" hidden>
-                    Cancelar edição
-                </button>
+                <button type="submit" id="btn-salvar" class="btn-primary">Adicionar ao carrinho</button>
+                <button type="button" id="btn-cancelar-edicao" class="btn-cancelar" hidden>Cancelar edição</button>
             </div>
-
         </form>
 
-        <!-- Pesquisa de produtos -->
         <div class="form-group busca-container">
-
             <label for="campo-busca">Pesquisar produto:</label>
-
             <input type="search" id="campo-busca" placeholder="Digite o nome do produto..." autocomplete="off">
-
         </div>
 
-        <!-- Cabeçalho de ações e resumo -->
         <div class="resumo-container">
-
-            <h3 id="total-estoque">
-                Total em estoque: R$ 0,00
-            </h3>
-
-            <button type="button" id="limpar-tabela" class="btn-danger">
-                Limpar tudo
-            </button>
-
+            <h3 id="total-estoque">Total em estoque: R$ 0,00</h3>
+            <div class="botoes-resumo">
+                <button type="button" id="btn-conceito-bootstrap" class="btn-conceito">Conceito Bootstrap</button>
+                <button type="button" id="limpar-tabela" class="btn-danger">Limpar tudo</button>
+            </div>
         </div>
 
-        <!-- Tabela de exibição -->
+        <div id="notificacao" class="notificacao" role="status" aria-live="polite" hidden></div>
+
         <div class="tabela-container">
-
             <table id="tabela-produtos">
-
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -88,23 +65,35 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-
-                <tbody>
-                    <!-- As linhas serão criadas pelo JavaScript -->
-                </tbody>
-
+                <tbody></tbody>
             </table>
-
         </div>
 
-        <p id="mensagem-vazia" hidden>
-            Nenhum produto cadastrado ainda.
-        </p>
+        <p id="mensagem-vazia" hidden>Nenhum produto cadastrado ainda.</p>
+    </div>
 
+    <div id="modal-confirmacao" class="modal-overlay" hidden>
+        <section class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+            <h2 id="modal-titulo">Confirmar ação</h2>
+            <p id="modal-mensagem"></p>
+            <div class="modal-botoes">
+                <button type="button" id="modal-cancelar" class="btn-cancelar">Cancelar</button>
+                <button type="button" id="modal-confirmar" class="btn-danger">Confirmar</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal explicativo -->
+    <div id="modal-conceito" class="modal-overlay" hidden>
+        <section class="modal-caixa modal-conceito-caixa" role="dialog" aria-modal="true" aria-labelledby="conceito-titulo">
+            <button type="button" id="fechar-conceito" class="modal-fechar" aria-label="Fechar">×</button>
+            <h2 id="conceito-titulo">O que é Bootstrap?</h2>
+            <p>Bootstrap é um framework front-end que oferece componentes e estilos prontos para acelerar a criação de interfaces.</p>
+            <p>Neste projeto, o conceito é demonstrado pela organização de componentes da interface, como botões, formulários e janelas modais. Os modais desta versão foram personalizados com HTML, CSS e JavaScript para combinar com a identidade visual do sistema.</p>
+            <button type="button" id="entendi-conceito" class="btn-primary">Entendi</button>
+        </section>
     </div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>
